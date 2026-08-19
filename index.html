@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Surprise!</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1e1e2f, #2d1b36);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      color: #ff4757;
+    }
+
+    /* Countdown Box Styling */
+    #timer-container {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 30px;
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+    }
+
+    #countdown {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .time-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 70px;
+    }
+
+    .time-box span {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #eccc68;
+    }
+
+    .time-box label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      margin-top: 5px;
+      color: #a4b0be;
+    }
+
+    /* Revealed Content Styling (Hidden initially) */
+    #reveal-section {
+      display: none;
+      animation: fadeIn 1.5s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 500px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .card h2 {
+      color: #ff6b81;
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+
+    .card p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #f1f2f6;
+    }
+
+    /* Music Control Button */
+    #music-control {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 30px;
+      background: linear-gradient(45deg, #ff4757, #ff6b81);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    #music-control:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Countdown Section -->
+  <div id="timer-container">
+    <h1>🎉 Countdown to 25 August 🎉</h1>
+    <div id="countdown">
+      <div class="time-box"><span id="days">00</span><label>Days</label></div>
+      <div class="time-box"><span id="hours">00</span><label>Hours</label></div>
+      <div class="time-box"><span id="minutes">00</span><label>Minutes</label></div>
+      <div class="time-box"><span id="seconds">00</span><label>Seconds</label></div>
+    </div>
+  </div>
+
+  <!-- Hidden Birthday Surprise Section -->
+  <div id="reveal-section">
+    <div class="card">
+      <h2>❤️ Happy Birthday Laado! ❤️</h2>
+      <p>Aapka wait khatam hua! Wishing you the happiest birthday ever. May your day be filled with lots of love, smiles, and endless joy! 🎂✨</p>
+    </div>
+  </div>
+
+  <!-- Background Music Element -->
+  <audio id="bg-music" loop>
+    <source src="song.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Play/Pause Button -->
+  <button id="music-control">▶️ Play Music</button>
+
+  <script>
+    const audio = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-control');
+    const timerContainer = document.getElementById('timer-container');
+    const revealSection = document.getElementById('reveal-section');
+
+    // Target Date: 25 August
+    const currentYear = new Date().getFullYear();
+    let targetDate = new Date(`August 25, ${currentYear} 00:00:00`).getTime();
+
+    if (new Date().getTime() > targetDate) {
+      targetDate = new Date(`August 25, ${currentYear + 1} 00:00:00`).getTime();
+    }
+
+    function revealContent() {
+      timerContainer.style.display = 'none';
+      revealSection.style.display = 'block';
+      
+      // Auto-play audio when countdown ends
+      audio.play().then(() => {
+        musicBtn.innerText = '⏸️ Pause Music';
+      }).catch(error => {
+        console.log("Autoplay blocked by browser:", error);
+      });
+    }
+
+    const timerInterval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        clearInterval(timerInterval);
+        revealContent();
+        return;
+      }
+
+      // Time Calculations
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('days').innerText = days < 10 ? '0' + days : days;
+      document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+      document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+      document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+    }, 1000);
+
+    // Play / Pause music toggle
+    musicBtn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+        musicBtn.innerText = '⏸️ Pause Music';
+      } else {
+        audio.pause();
+        musicBtn.innerText = '▶️ Play Music';
+      }
+    });
+  </script>
+</body>
+</html>
